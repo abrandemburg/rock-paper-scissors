@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <main>
+        <div class="score-style">
+            <span id="compScore">0</span>
+        </div>
+        <div class="options-container">
+            <div class="comp-options">
+                <div id="compRock" class="comp-rock option"><img src="images/rock.png" alt="Rock"></div>
+                <div id="compPaper" class="comp-paper option"><img src="images/paper.png" alt="paper"></div>
+                <div id="compScissor" class="comp-scissor option"><img src="images/scissor.png" alt="scissor"></div>
+            </div>
+            <div class="player-options">
+                <div role="button" id="playerRock" data-key="rock" class="option"><img src="images/rock.png" alt="Rock"></div>
+                <div role="button" id="playerPaper" data-key="paper" class="option"><img src="images/paper.png" data-key="paper" alt="paper"></div>
+                <div role="button" id="playerScissor" data-key="scissor" class="option"><img src="images/scissor.png" data-key="scissor" alt="scissor"></div>
+            </div>
+        </div>
+        <div class="score-style">
+            <span id="playerScore">0</span>
+        </div>
+        <div id="gameMessage" class="game-message"></div>
+        <div id="resetButton" class="game-reset" role="button"><a>RESET</a></div>
+    </main>
+    <script>
+        let playerScore = 0
+        let computerScore = 0
+
+        const win = document.createTextNode("YOU WIN!")
+        const lose = document.createTextNode("YOU LOSE!")
+        const draw = document.createTextNode("DRAW!")
+
+        const playerRock = document.getElementById('playerRock')
+        const playerPaper = document.getElementById('playerPaper')
+        const playerScissor = document.getElementById('playerScissor')
+
+        const playerScoreElement = document.getElementById('playerScore')
+        const computerScoreElement = document.getElementById('compScore')
+
+        const gameMessage = document.getElementById('gameMessage')
+
+        Array.prototype.random = function() {
+            return this[Math.floor(Math.random() * this.length)]
+        }
+
+        function computerSelection() {
+            const arr = ['rock', 'paper', 'scissor']
+
+            const selection = arr.random()
+            return selection
+        }
+
+        function addPlayerScore() {
+            playerScoreElement.innerText = ''
+            gameMessage.innerText = ''
+            playerScore++
+            playerScoreElement.innerText = `${playerScore}`
+            gameMessage.appendChild(win)
+        }
+
+        function addCompScore() {
+            computerScoreElement.innerText = ''
+            gameMessage.innerText = ''
+            computerScore++
+            computerScoreElement.innerText = `${computerScore}`
+            gameMessage.appendChild(lose)
+        }
+
+        function drawMessage() {
+            gameMessage.innerText = ''
+            gameMessage.appendChild(draw)
+        }
+
+        function play(player, computer) {
+
+            if (player === 'rock' && computer === 'rock') {
+                drawMessage()
+            } else if (player === 'rock' && computer === 'scissor') {
+                addPlayerScore()
+            } else if (player === 'rock' && computer === 'paper') {
+                addCompScore()
+            } else if (player === 'paper' && computer === 'rock') {
+                addPlayerScore()
+            } else if (player === 'paper' && computer === 'paper') {
+                drawMessage()
+            } else if (player === 'paper' && computer === 'scissor') {
+                addCompScore()
+            } else if (player === 'scissor' && computer === 'scissor') {
+                drawMessage()
+            } else if (player === 'scissor' && computer === 'rock') {
+                addCompScore()
+            } else if (player === 'scissor' && computer === 'rock') {
+                addPlayerScore()
+            }
+
+            return
+        }
+
+        function removePlayedAll() {
+            const allGameOptions = document.getElementsByClassName("option")
+            for (i = 0; i < allGameOptions.length; i++) {
+                allGameOptions[i].classList.remove("played")
+            }
+
+        }
+
+        function addPlayedClass(player, computer) {
+            const computerElement = document.getElementsByClassName(`comp-${computer}`)
+            computerElement[0].classList.add("played")
+            player.classList.add("played")
+
+            console.log(player)
+            console.log(computerElement[0])
+        }
+
+        function playRound(e) {
+            removePlayedAll()
+            const computerPlay = computerSelection()
+            const playerPlay = e.path[1].getAttribute("data-key")
+            addPlayedClass(e.path[1], computerPlay)
+
+            play(playerPlay, computerPlay)
+        }
+
+        playerRock.addEventListener('click', (e) => {
+            playRound(e)
+        })
+
+        playerPaper.addEventListener('click', (e) => {
+            playRound(e)
+        })
+
+        playerScissor.addEventListener('click', (e) => {
+            playRound(e)
+        })
+
+        resetButton.addEventListener('click', (e) => {
+            console.log(e.target)
+            playerScore = 0
+            computerScore = 0
+            computerScoreElement.innerText = `${computerScore}`
+            playerScoreElement.innerText = `${playerScore}`
+            gameMessage.innerText = 'MAKE YOUR CHOICE!'
+            removePlayedAll()
+
+        })
+    </script>
+</body>
+
+</html>
+<!-- <script>
+    let playerScore = 0;
+    let computerScore = 0;
+
+    Array.prototype.random = function() {
+        return this[Math.floor(Math.random() * this.length)]
+    }
+
+    const computerPlay = function() {
+        const arr = ['rock', 'paper', 'scissor']
+
+        const selection = arr.random.toLowerCase()
+        return selection
+    }
+
+    const playerSelection = function() {
+        const selection = prompt('Select Rock, Paper or Scissor')
+        return selection.toLowerCase()
+    }
+
+    function playRound(player, computer) {
+
+        //player rock
+        if (player === 'rock' && computer === 'rock') {
+            return 'Draw, rock = rock'
+        } else if (player === 'rock' && computer === 'paper') {
+            computerScore++
+            return 'You lose, paper > rock'
+        } else if (player === 'rock' && computer === 'scissor') {
+            playerScore++
+            return 'You win, rock > scissor'
+
+            //player paper
+        } else if (player === 'paper' && computer === 'rock') {
+            playerScore++
+            return 'You win, rock > paper'
+        } else if (player === 'paper' && computer === 'scissor') {
+            computerScore++
+            return 'You lose, scissor > paper'
+        } else if (player === 'paper' && computer === 'paper') {
+            return 'Draw, paper = paper'
+
+            //player scissor
+        } else if (player === 'scissor' && computer === 'rock') {
+            computerScore++
+            return 'You lose, rock > scissor'
+        } else if (player === 'scissor' && computer === 'paper') {
+            playerScore++
+            return 'You win, scissor > paper'
+        } else if (player === 'scissor' && computer === 'scissor') {
+            return 'Draw, scissor = scissor'
+        }
+
+    }
+
+    const game = function() {
+
+        const roundOne = playRound(playerSelection, computerPlay)
+        console.log(`${roundOne}. Player: ${playerScore} | Computer: ${computerScore}`)
+
+    }
+
+    game()
+</script> -->
